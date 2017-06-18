@@ -37,13 +37,14 @@
                             <asp:TextBox ID="txtEmployeeName" runat="server"></asp:TextBox>
                         </td>
                         <td class="auto-style2">
-                            &nbsp;</td>
+                            <asp:RequiredFieldValidator ID="rfvEmployeeName" runat="server" ControlToValidate="txtEmployeeName" ErrorMessage="Name is required." ForeColor="Red"></asp:RequiredFieldValidator>
+                        </td>
                     </tr>
                     <tr>
                         <td>Degignation :</td>
                         <td colspan="2">
                             <asp:DropDownList ID="ddlDesignation" runat="server">
-                                <asp:ListItem>Designation</asp:ListItem>
+                                <asp:ListItem Selected="True" Value="-1">Designation</asp:ListItem>
                                 <asp:ListItem>CEO</asp:ListItem>
                                 <asp:ListItem>Project Manager</asp:ListItem>
                                 <asp:ListItem>Team Leader</asp:ListItem>
@@ -57,7 +58,9 @@
                             <asp:TextBox ID="txtSalary" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            &nbsp;</td>
+                            <asp:RequiredFieldValidator ID="rfvSalary" runat="server" ControlToValidate="txtSalary" Display="Dynamic" ErrorMessage="Salary is required." ForeColor="Red"></asp:RequiredFieldValidator>
+                            <asp:RegularExpressionValidator ID="revSalary" runat="server" ControlToValidate="txtSalary" Display="Dynamic" ErrorMessage="Enter only digit." ForeColor="Red" ValidationExpression="^[0-9]*$"></asp:RegularExpressionValidator>
+                        </td>
                     </tr>
                     <tr>
                         <td>Email<asp:Label ID="Label3" runat="server" Font-Bold="True" ForeColor="Red" Text="*"></asp:Label>:</td>
@@ -65,7 +68,9 @@
                             <asp:TextBox ID="txtEmail" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            &nbsp;</td>
+                            <asp:RequiredFieldValidator ID="rfvEmail" runat="server" ControlToValidate="txtEmail" Display="Dynamic" ErrorMessage="Email id is required." ForeColor="Red"></asp:RequiredFieldValidator>
+                            <asp:RegularExpressionValidator ID="revEmail" runat="server" ControlToValidate="txtEmail" Display="Dynamic" ErrorMessage="Invalid Email id." ForeColor="Red" ValidationExpression="\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*"></asp:RegularExpressionValidator>
+                        </td>
                     </tr>
                     <tr>
                         <td>Mobile<asp:Label ID="Label4" runat="server" Font-Bold="True" ForeColor="Red" Text="*"></asp:Label>:</td>
@@ -73,13 +78,15 @@
                             <asp:TextBox ID="txtMobile" runat="server"></asp:TextBox>
                         </td>
                         <td>
-                            &nbsp;</td>
+                            <asp:RequiredFieldValidator ID="rfvMobile" runat="server" ControlToValidate="txtMobile" Display="Dynamic" ErrorMessage="Mobile number is required." ForeColor="Red"></asp:RequiredFieldValidator>
+                            <asp:RegularExpressionValidator ID="revMobile" runat="server" ControlToValidate="txtMobile" Display="Dynamic" ErrorMessage="Invalid mobile number." ForeColor="Red" ValidationExpression="^[0-9]{10}$"></asp:RegularExpressionValidator>
+                        </td>
                     </tr>
                     <tr>
                         <td>Qualification :</td>
                         <td colspan="2">
                             <asp:DropDownList ID="ddlQualification" runat="server">
-                                <asp:ListItem>Qualification</asp:ListItem>
+                                <asp:ListItem Selected="True" Value="-1">Qualification</asp:ListItem>
                                 <asp:ListItem>MBA</asp:ListItem>
                                 <asp:ListItem>M.Tech</asp:ListItem>
                                 <asp:ListItem>B.Tech</asp:ListItem>
@@ -129,14 +136,14 @@
                         <ItemTemplate>
                                <asp:LinkButton  runat="server" CommandName="ACTION_UPDATE"
                                     Text="Edit"
-                                    CommandArgument='<%# Eval("EmployeeId") %>' OnCommand="gridViewEmployees_OnRowSelect"  />
+                                    CommandArgument='<%# Eval("EmployeeId") %>' OnCommand="gridViewEmployees_OnRowSelect" CausesValidation="False" />
                         </ItemTemplate>
                     </asp:TemplateField>
                      <asp:TemplateField>
                         <ItemTemplate>
                                <asp:LinkButton runat="server" CommandName="ACTION_DELETE"
                                     Text="Delete"
-                                    CommandArgument='<%# Eval("EmployeeId") %>' OnCommand="gridViewEmployees_OnRowSelect"  />
+                                    CommandArgument='<%# Eval("EmployeeId") %>' OnCommand="gridViewEmployees_OnRowSelect" CausesValidation="False" />
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>

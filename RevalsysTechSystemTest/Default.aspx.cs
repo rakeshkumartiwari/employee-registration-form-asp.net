@@ -80,7 +80,7 @@ namespace RevalsysTechSystemTest
             UpdateEmployeeButtons();
             LogCurrentSession();
 
-        } 
+        }
         #endregion
         #region PRIVATE HELPER METHODS
         private void UpdateEmployeeButtons()
@@ -98,11 +98,11 @@ namespace RevalsysTechSystemTest
         {
             var employee = new Employee();
             employee.EmployeeName = txtEmployeeName.Text;
-            employee.Designation = ddlDesignation.SelectedItem.Text;
+            employee.Designation = GetSelectedValue(ddlDesignation);
             employee.Salary = Convert.ToDecimal(txtSalary.Text);
             employee.Email = txtEmail.Text;
             employee.Mobile = txtMobile.Text;
-            employee.Qualification = ddlQualification.SelectedItem.Text;
+            employee.Qualification = GetSelectedValue(ddlQualification);
             var managerId = 0;
             if (Int32.TryParse(txtManager.Text, out managerId))
             {
@@ -115,7 +115,7 @@ namespace RevalsysTechSystemTest
         {
             if (_employeeSession.IsEmployeeSelected())
             {
-                int selectedId = Convert.ToInt32(Session[EmployeeConstants.SELECTED_EMPLOYEE].ToString());
+                int selectedId = _employeeSession.GetSelectedEmployee();
                 var employee = _repository.GetEmployee(selectedId);
                 txtEmployeeName.Text = employee.EmployeeName;
                 ddlDesignation.SelectedValue = employee.Designation;
@@ -127,6 +127,11 @@ namespace RevalsysTechSystemTest
 
             }
 
+        }
+
+        private string GetSelectedValue(DropDownList ddl)
+        {
+            return IsOptionSelected(ddl.SelectedItem.Value) ? string.Empty : ddl.SelectedItem.Text;
         }
 
         private Employee UpdateEmployeeFromUI()
@@ -218,7 +223,10 @@ namespace RevalsysTechSystemTest
         }
 
 
-
+        private bool IsOptionSelected(string value)
+        {
+            return EmployeeConstants.NO_OPTION_SELECTED != value;
+        }
 
         private void UpdateResetButtonVisibility()
         {
@@ -230,7 +238,7 @@ namespace RevalsysTechSystemTest
             {
                 btnReset.Visible = true;
             }
-        } 
+        }
         #endregion
         #region LOGS
         private void LogCurrentSession()
@@ -248,8 +256,8 @@ namespace RevalsysTechSystemTest
         {
             lblLog.Text = "";
         }
-        
+
         #endregion
-        
+
     }
 }

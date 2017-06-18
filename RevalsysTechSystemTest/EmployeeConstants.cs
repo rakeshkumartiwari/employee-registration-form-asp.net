@@ -12,6 +12,7 @@ namespace RevalsysTechSystemTest
         public const string BUTTON_NAME_UPDATE = "Update";
         public const string BUTTON_NAME_DELETE = "Delete";
         public const string BUTTON_NAME_SAVE = "Save";
+        public const string NO_OPTION_SELECTED = "-1";
 
 
     }

@@ -82,6 +82,7 @@ namespace RevalsysTechSystemTest
 
         }
         #endregion
+
         #region PRIVATE HELPER METHODS
         private void UpdateEmployeeButtons()
         {
@@ -214,6 +215,7 @@ namespace RevalsysTechSystemTest
             }
         }
         #endregion
+
         #region LOGS
         private void LogCurrentSession()
         {

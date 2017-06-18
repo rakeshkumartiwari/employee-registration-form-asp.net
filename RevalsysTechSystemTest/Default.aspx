@@ -36,7 +36,7 @@
                         <td>
                             <asp:TextBox ID="txtEmployeeName" runat="server"></asp:TextBox>
                         </td>
-                        <td class="auto-style2">
+                        <td>
                             <asp:RequiredFieldValidator ID="rfvEmployeeName" runat="server" ControlToValidate="txtEmployeeName" ErrorMessage="Name is required." ForeColor="Red"></asp:RequiredFieldValidator>
                         </td>
                     </tr>

@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="RevalsysTechSystemTest.Default" EnableViewState="true" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="RevalsysTechSystemTest.Default" EnableViewState="true" Culture="hi-IN"%>
 
 <!DOCTYPE html>
 
@@ -115,11 +115,12 @@
             <asp:GridView ID="gridViewEmployees"  runat="server" AutoGenerateColumns="False"
                 CellPadding="4" DataKeyNames="EmployeeId" ForeColor="#333333" GridLines="None"
                 OnRowCommand="gridViewEmployees_OnRowSelect"
-                CssClass="grid" >
+                CssClass="grid" 
+                ShowHeaderWhenEmpty="True" EmptyDataText="No records Found">
                 <Columns>
                     <asp:BoundField HeaderText="Name" DataField="EmployeeName" />
                     <asp:BoundField HeaderText="Designation" DataField="Designation" />
-                    <asp:BoundField HeaderText="Salary" DataField="Salary" />
+                    <asp:BoundField HeaderText="Salary" DataField="Salary" DataFormatString="{0:C}" />
                     <asp:BoundField HeaderText="Email" DataField="Email" />
                     <asp:BoundField HeaderText="Mobile" DataField="Mobile" />
                     <asp:BoundField HeaderText="Qualification" DataField="Qualification" />

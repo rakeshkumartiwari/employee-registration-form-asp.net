@@ -93,10 +93,10 @@ namespace RevalsysTechSystemTest
             _employeeSession.Reset();
         }
 
-
-        private Employee GetEmployeeFromUI()
+        private Employee CreateEmployeeFromUI()
         {
             var employee = new Employee();
+            employee.EmployeeId = _employeeSession.GetSelectedEmployee();
             employee.EmployeeName = txtEmployeeName.Text;
             employee.Designation = GetSelectedValue(ddlDesignation);
             employee.Salary = Convert.ToDecimal(txtSalary.Text);
@@ -108,9 +108,9 @@ namespace RevalsysTechSystemTest
             {
                 employee.Manager = managerId;
             }
+
             return employee;
         }
-
         private void SetUIFromEmployee()
         {
             if (_employeeSession.IsEmployeeSelected())
@@ -137,44 +137,21 @@ namespace RevalsysTechSystemTest
         {
             return EmployeeConstants.NO_OPTION_SELECTED != value;
         }
-        private Employee UpdateEmployeeFromUI()
-        {
-            var employee = new Employee();
-            if (_employeeSession.IsEmployeeSelected())
-            {
-                employee.EmployeeId = _employeeSession.GetSelectedEmployee();
-                employee.EmployeeName = txtEmployeeName.Text;
-                employee.Designation = GetSelectedValue(ddlDesignation);
-                employee.Salary = Convert.ToDecimal(txtSalary.Text);
-                employee.Email = txtEmail.Text;
-                employee.Mobile = txtMobile.Text;
-                employee.Qualification = GetSelectedValue(ddlQualification);
-                var managerId = 0;
-                if (Int32.TryParse(txtManager.Text, out managerId))
-                {
-                    employee.Manager = managerId;
-                }
 
-            }
-            return employee;
-        }
         private void InsertEmployee()
         {
-            _repository.Insert(GetEmployeeFromUI());
+            _repository.Insert(CreateEmployeeFromUI());
         }
 
         private void DeleteEmployee()
         {
-            if (_employeeSession.IsEmployeeSelected())
-            {
-                int selectedId = _employeeSession.GetSelectedEmployee();
-                _repository.Delete(selectedId);
-            }
+            _repository.Delete(_employeeSession.GetSelectedEmployee());
+
         }
 
         private void UpdateEmployee()
         {
-            _repository.Update(UpdateEmployeeFromUI());
+            _repository.Update(CreateEmployeeFromUI());
         }
 
         private void HandleException(Exception exception)
@@ -224,9 +201,6 @@ namespace RevalsysTechSystemTest
 
             }
         }
-
-
-
 
         private void UpdateResetButtonVisibility()
         {

@@ -41,6 +41,12 @@ footer {
 }
 .grid {
     width: 100%;
-    margin: 10px;
-    
+   
+}
+.grid-container {
+    overflow: scroll;
+    height: 170px;
+    width: 98%;
+     margin-top: 15px;
+    margin-left: 5px;
 }

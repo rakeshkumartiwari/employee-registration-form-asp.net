@@ -1,4 +1,6 @@
-﻿using System.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using BLL;
 
@@ -34,6 +36,7 @@ namespace DAL
                 objConnection.Open();
                 var objCommand = new SqlCommand("sp_UpdateEmployee", objConnection);
                 objCommand.CommandType = CommandType.StoredProcedure;
+                objCommand.Parameters.AddWithValue("EmployeeId", employee.EmployeeId);
                 objCommand.Parameters.AddWithValue("EmployeeName", employee.EmployeeName);
                 objCommand.Parameters.AddWithValue("Designation", employee.Designation);
                 objCommand.Parameters.AddWithValue("Salary", employee.Salary);
@@ -41,7 +44,7 @@ namespace DAL
                 objCommand.Parameters.AddWithValue("Mobile", employee.Mobile);
                 objCommand.Parameters.AddWithValue("Qualification", employee.Qualification);
                 objCommand.Parameters.AddWithValue("Manager", employee.Manager);
-                
+
                 objCommand.ExecuteNonQuery();
 
             }
@@ -57,10 +60,43 @@ namespace DAL
                 objCommand.CommandType = CommandType.StoredProcedure;
                 var objAdapter = new SqlDataAdapter(objCommand);
                 objAdapter.Fill(objDataSet);
+
                 return objDataSet;
             }
         }
 
+        public Employee GetEmployee(int selectedId)
+        {
+            using (var objConnection = new SqlConnection(connectionString))
+            {
+                objConnection.Open();
+                var objDataSet = new DataSet();
+                var objCommand = new SqlCommand("sp_GetEmployee", objConnection);
+                objCommand.CommandType = CommandType.StoredProcedure;
+                objCommand.Parameters.AddWithValue("EmployeeId", selectedId);
+                var objAdapter = new SqlDataAdapter(objCommand);
+                objAdapter.Fill(objDataSet);
+
+                var employee = new Employee();
+
+                employee.EmployeeId = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["EmployeeId"].ToString());
+                employee.EmployeeName = objDataSet.Tables[0].Rows[0]["EmployeeName"].ToString();
+                employee.Designation = objDataSet.Tables[0].Rows[0]["Designation"].ToString();
+                employee.Salary = Convert.ToDecimal(objDataSet.Tables[0].Rows[0]["Salary"].ToString());
+                employee.Email = objDataSet.Tables[0].Rows[0]["Email"].ToString();
+                employee.Mobile = objDataSet.Tables[0].Rows[0]["Mobile"].ToString();
+                employee.Qualification = objDataSet.Tables[0].Rows[0]["Qualification"].ToString();
+
+                var managerId = 0;
+                var manager = objDataSet.Tables[0].Rows[0]["Manager"].ToString();
+
+                if (Int32.TryParse(manager, out managerId))
+                {
+                    employee.Manager = managerId;
+                }
+                return employee;
+            }
+        }
         public void Delete(string employeeId)
         {
             using (var objConnection = new SqlConnection(connectionString))

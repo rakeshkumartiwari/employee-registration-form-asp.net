@@ -105,7 +105,7 @@
                         <td></td>
                         <td colspan="2">
                             <asp:Button ID="btnSubmit" runat="server" Text="Submit" OnClick="btnSubmit_Click" />
-                            <asp:Button ID="btnReset" runat="server" Text="Reset" OnClick="btnReset_Click" />
+                            <asp:Button ID="btnReset" runat="server" Text="Reset" OnClick="btnReset_Click" CausesValidation="False" ValidateRequestMode="Disabled" ValidationGroup="reset" />
                         </td>
 
                     </tr>
@@ -122,7 +122,7 @@
             <asp:GridView ID="gridViewEmployees"  runat="server" AutoGenerateColumns="False"
                 CellPadding="4" DataKeyNames="EmployeeId" ForeColor="#333333" GridLines="None"
                 OnRowCommand="gridViewEmployees_OnRowSelect"
-                CssClass="grid" 
+                CssClass="grid"
                 ShowHeaderWhenEmpty="True" EmptyDataText="No records Found">
                 <Columns>
                     <asp:BoundField HeaderText="Name" DataField="EmployeeName" />

@@ -131,9 +131,12 @@ namespace RevalsysTechSystemTest
 
         private string GetSelectedValue(DropDownList ddl)
         {
-            return IsOptionSelected(ddl.SelectedItem.Value) ? string.Empty : ddl.SelectedItem.Text;
+            return IsOptionSelected(ddl.SelectedItem.Value) ? ddl.SelectedItem.Text : string.Empty;
         }
-
+        private bool IsOptionSelected(string value)
+        {
+            return EmployeeConstants.NO_OPTION_SELECTED != value;
+        }
         private Employee UpdateEmployeeFromUI()
         {
             var employee = new Employee();
@@ -141,11 +144,11 @@ namespace RevalsysTechSystemTest
             {
                 employee.EmployeeId = _employeeSession.GetSelectedEmployee();
                 employee.EmployeeName = txtEmployeeName.Text;
-                employee.Designation = ddlDesignation.SelectedItem.Text;
+                employee.Designation = GetSelectedValue(ddlDesignation);
                 employee.Salary = Convert.ToDecimal(txtSalary.Text);
                 employee.Email = txtEmail.Text;
                 employee.Mobile = txtMobile.Text;
-                employee.Qualification = ddlQualification.SelectedItem.Text;
+                employee.Qualification = GetSelectedValue(ddlQualification);
                 var managerId = 0;
                 if (Int32.TryParse(txtManager.Text, out managerId))
                 {
@@ -223,10 +226,7 @@ namespace RevalsysTechSystemTest
         }
 
 
-        private bool IsOptionSelected(string value)
-        {
-            return EmployeeConstants.NO_OPTION_SELECTED != value;
-        }
+
 
         private void UpdateResetButtonVisibility()
         {

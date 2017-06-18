@@ -59,7 +59,7 @@
                         </td>
                         <td>
                             <asp:RequiredFieldValidator ID="rfvSalary" runat="server" ControlToValidate="txtSalary" Display="Dynamic" ErrorMessage="Salary is required." ForeColor="Red"></asp:RequiredFieldValidator>
-                            <asp:RegularExpressionValidator ID="revSalary" runat="server" ControlToValidate="txtSalary" Display="Dynamic" ErrorMessage="Enter only digit." ForeColor="Red" ValidationExpression="^[0-9]*$"></asp:RegularExpressionValidator>
+                            <asp:RegularExpressionValidator ID="revSalary" runat="server" ControlToValidate="txtSalary" Display="Dynamic" ErrorMessage="Enter only digit." ForeColor="Red" ValidationExpression="^[0-9.]*$"></asp:RegularExpressionValidator>
                         </td>
                     </tr>
                     <tr>

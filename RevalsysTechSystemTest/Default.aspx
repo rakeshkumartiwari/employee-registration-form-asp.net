@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="RevalsysTechSystemTest.Default" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Default.aspx.cs" Inherits="RevalsysTechSystemTest.Default" EnableViewState="true" %>
 
 <!DOCTYPE html>
 
@@ -7,30 +7,41 @@
     <title>Employee</title>
     <link href="Content/bootstrap.css" rel="stylesheet" />
     <link href="Style/StyleSheet.css" rel="stylesheet" />
+    <style type="text/css">
+        table {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
 </head>
 <body>
     <form id="form1" runat="server">
-       
-            <header>
-                <h3>
-                    Employee Registration
-                </h3>
-            </header>
-            <div class="container">
-                <div>
-                    <asp:Label ID="lblError" runat="server" ForeColor="#FF0066"></asp:Label>
-                </div>
-                <div class="tbl">
-                      <table>
+
+        <header>
+            <h3>Employee Registration
+            </h3>
+        </header>
+        <div class="container">
+            <div>
+                <asp:Label ID="lblLog" runat="server" ForeColor="#FF0066" Visible="False"></asp:Label>
+            </div>
+            <div>
+                <asp:Label ID="lblError" runat="server" ForeColor="#FF0066"></asp:Label>
+            </div>
+            <div class="tbl">
+                <table>
                     <tr>
-                        <td>Emaployee Name :</td>
+                        <td>Emaployee Name<asp:Label ID="Label1" runat="server" Font-Bold="True" ForeColor="Red" Text="*"></asp:Label>
+                            :</td>
                         <td>
                             <asp:TextBox ID="txtEmployeeName" runat="server"></asp:TextBox>
                         </td>
+                        <td class="auto-style2">
+                            &nbsp;</td>
                     </tr>
                     <tr>
                         <td>Degignation :</td>
-                        <td>
+                        <td colspan="2">
                             <asp:DropDownList ID="ddlDesignation" runat="server">
                                 <asp:ListItem>Designation</asp:ListItem>
                                 <asp:ListItem>CEO</asp:ListItem>
@@ -38,28 +49,35 @@
                                 <asp:ListItem>Team Leader</asp:ListItem>
                             </asp:DropDownList>
                         </td>
+
                     </tr>
                     <tr>
-                        <td>Salary :</td>
+                        <td>Salary<asp:Label ID="Label2" runat="server" Font-Bold="True" ForeColor="Red" Text="*"></asp:Label>:</td>
                         <td>
                             <asp:TextBox ID="txtSalary" runat="server"></asp:TextBox>
                         </td>
+                        <td>
+                            &nbsp;</td>
                     </tr>
                     <tr>
-                        <td>Email :</td>
+                        <td>Email<asp:Label ID="Label3" runat="server" Font-Bold="True" ForeColor="Red" Text="*"></asp:Label>:</td>
                         <td>
                             <asp:TextBox ID="txtEmail" runat="server"></asp:TextBox>
                         </td>
+                        <td>
+                            &nbsp;</td>
                     </tr>
                     <tr>
-                        <td>Mobile :</td>
+                        <td>Mobile<asp:Label ID="Label4" runat="server" Font-Bold="True" ForeColor="Red" Text="*"></asp:Label>:</td>
                         <td>
                             <asp:TextBox ID="txtMobile" runat="server"></asp:TextBox>
                         </td>
+                        <td>
+                            &nbsp;</td>
                     </tr>
                     <tr>
                         <td>Qualification :</td>
-                        <td>
+                        <td colspan="2">
                             <asp:DropDownList ID="ddlQualification" runat="server">
                                 <asp:ListItem>Qualification</asp:ListItem>
                                 <asp:ListItem>MBA</asp:ListItem>
@@ -67,52 +85,61 @@
                                 <asp:ListItem>B.Tech</asp:ListItem>
                             </asp:DropDownList>
                         </td>
+
                     </tr>
                     <tr>
                         <td>Manager :</td>
-                        <td>
+                        <td colspan="2">
                             <asp:TextBox ID="txtManager" runat="server"></asp:TextBox>
                         </td>
+
                     </tr>
                     <tr>
-                        <td>
-                            
-                        </td>
-                        <td>
+                        <td></td>
+                        <td colspan="2">
                             <asp:Button ID="btnSubmit" runat="server" Text="Submit" OnClick="btnSubmit_Click" />
-                            <asp:Button ID="btnReset" runat="server" Text="Reset" />
+                            <asp:Button ID="btnReset" runat="server" Text="Reset" OnClick="btnReset_Click" />
                         </td>
+
                     </tr>
                 </table>
-                </div>
-                
-                
             </div>
-            <footer>
-                 <h4>
-                     Register Employee
-                </h4>
-            </footer>
+
+
+        </div>
+        <footer>
+            <h4>Register Employee
+            </h4>
+        </footer>
         <div>
-            <asp:GridView ID="gridViewEmployees" runat="server" AutoGenerateColumns="False" CellPadding="4" DataKeyNames="EmployeeId" ForeColor="#333333" GridLines="None"
-                OnRowEditing="gridViewEmployees_OnRowEditing"
-                OnRowDeleting="gridViewEmployees_OnRowDeleting"
-               CssClass="grid"
-                >
+            <asp:GridView ID="gridViewEmployees"  runat="server" AutoGenerateColumns="False"
+                CellPadding="4" DataKeyNames="EmployeeId" ForeColor="#333333" GridLines="None"
+                OnRowCommand="gridViewEmployees_OnRowSelect"
+                CssClass="grid" >
                 <Columns>
-                    <asp:BoundField HeaderText="Name" DataField="EmployeeName"/>
-                    <asp:BoundField HeaderText="Designation" DataField="Designation"/>
-                    <asp:BoundField HeaderText="Salary" DataField="Salary"/>
-                    <asp:BoundField HeaderText="Email" DataField="Email"/>
-                    <asp:BoundField HeaderText="Mobile" DataField="Mobile"/>
-                    <asp:BoundField HeaderText="Qualification" DataField="Qualification"/>
-                    <asp:BoundField HeaderText="Manager" DataField="ManagerName"/>
-                    
-                    <asp:CommandField ShowEditButton="True"/>
-                    <asp:CommandField ShowDeleteButton="True"/>
+                    <asp:BoundField HeaderText="Name" DataField="EmployeeName" />
+                    <asp:BoundField HeaderText="Designation" DataField="Designation" />
+                    <asp:BoundField HeaderText="Salary" DataField="Salary" />
+                    <asp:BoundField HeaderText="Email" DataField="Email" />
+                    <asp:BoundField HeaderText="Mobile" DataField="Mobile" />
+                    <asp:BoundField HeaderText="Qualification" DataField="Qualification" />
+                    <asp:BoundField HeaderText="Manager" DataField="ManagerName" />
+                    <asp:TemplateField>
+                        <ItemTemplate>
+                               <asp:LinkButton  runat="server" CommandName="ACTION_UPDATE"
+                                    Text="Edit"
+                                    CommandArgument='<%# Eval("EmployeeId") %>' OnCommand="gridViewEmployees_OnRowSelect"  />
+                        </ItemTemplate>
+                    </asp:TemplateField>
+                     <asp:TemplateField>
+                        <ItemTemplate>
+                               <asp:LinkButton runat="server" CommandName="ACTION_DELETE"
+                                    Text="Delete"
+                                    CommandArgument='<%# Eval("EmployeeId") %>' OnCommand="gridViewEmployees_OnRowSelect"  />
+                        </ItemTemplate>
+                    </asp:TemplateField>
                 </Columns>
                 <AlternatingRowStyle BackColor="White" ForeColor="#284775" />
-                <EditRowStyle BackColor="#999999" />
                 <FooterStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
                 <HeaderStyle BackColor="#5D7B9D" Font-Bold="True" ForeColor="White" />
                 <PagerStyle BackColor="#284775" ForeColor="White" HorizontalAlign="Center" />
@@ -124,7 +151,7 @@
                 <SortedDescendingHeaderStyle BackColor="#6F8DAE" />
             </asp:GridView>
         </div>
-       
+
         <script src="Scripts/jquery-1.9.1.js"></script>
         <script src="Scripts/bootstrap.js"></script>
     </form>

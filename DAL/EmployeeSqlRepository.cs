@@ -97,15 +97,14 @@ namespace DAL
                 return employee;
             }
         }
-        public void Delete(string employeeId)
+        public void Delete(int employeeId)
         {
             using (var objConnection = new SqlConnection(connectionString))
             {
                 objConnection.Open();
-                var objCommand = new SqlCommand("sp_Employee", objConnection);
+                var objCommand = new SqlCommand("sp_DeleteEmployee", objConnection);
                 objCommand.CommandType = CommandType.StoredProcedure;
-                objCommand.Parameters.AddWithValue("Action", "Delete");
-                objCommand.Parameters.AddWithValue("Action", employeeId);
+                objCommand.Parameters.AddWithValue("EmployeeId", employeeId);
                 objCommand.ExecuteNonQuery();
             }
         }

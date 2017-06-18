@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Data;
-using System.EnterpriseServices;
+using System.Net;
 using System.Web.UI.WebControls;
 using BLL;
 using DAL;
@@ -8,45 +7,46 @@ namespace RevalsysTechSystemTest
 {
     public partial class Default : System.Web.UI.Page
     {
-        private const string SELECTED_EMPLOYEE = "SELECTED_EMPLOYEE";
-
-        private const string ACTION_INSERT = "ACTION_INSERT";
-        private const string ACTION_UPDATE = "ACTION_UPDATE";
-        private const string ACTION_DELETE = "ACTION_DELETE";
-
-        private const string ACTION_NAME = "ACTION_NAME";
-        private EmployeeSqlRepository _repository;
+        private readonly EmployeeSqlRepository _repository;
+        private readonly EmployeeSession _employeeSession;
         public Default()
         {
             _repository = new EmployeeSqlRepository();
+            _employeeSession = new EmployeeSession();
         }
         protected void Page_Load(object sender, EventArgs e)
         {
             if (IsPostBack)
             {
-                UpdateActionButtonText();
+                LogCurrentSession();
             }
             if (!IsPostBack)
             {
                 ClearErrorMessage();
+                ClearLogInUi();
+                RefreshEmployeesGrid();
+
+                LogCurrentSession();
             }
-            RefrashEmployeesGrid();
+
+
         }
 
+        #region BUTTON EVENT HANDLERS
         protected void btnSubmit_Click(object sender, EventArgs e)
         {
             try
             {
-                var actionName = GetCurrentActionName();
+                var actionName = _employeeSession.GetCurrentActionName();
                 switch (actionName)
                 {
-                    case ACTION_UPDATE:
+                    case EmployeeConstants.ACTION_UPDATE:
                         UpdateEmployee();
                         break;
-                    case ACTION_DELETE:
+                    case EmployeeConstants.ACTION_DELETE:
                         DeleteEmployee();
                         break;
-                    case ACTION_INSERT:
+                    case EmployeeConstants.ACTION_INSERT:
                         InsertEmployee();
                         break;
                     default:
@@ -54,7 +54,11 @@ namespace RevalsysTechSystemTest
 
                 }
                 ClearEmployeeDetails();
-                RefrashEmployeesGrid();
+                RefreshEmployeesGrid();
+                ResetEmployeeSession();
+                UpdateEmployeeButtons();
+                LogCurrentSession();
+
             }
             catch (Exception ex)
             {
@@ -62,12 +66,90 @@ namespace RevalsysTechSystemTest
             }
 
         }
-
-        private void HandleException(Exception exception)
+        protected void btnReset_Click(object sender, EventArgs e)
         {
-            lblError.Text = exception.Message;
+            SetUIFromEmployee();
+        }
+        protected void gridViewEmployees_OnRowSelect(object sender, CommandEventArgs e)
+        {
+            var selectedEmployeeId = int.Parse(e.CommandArgument.ToString());
+            var actionName = e.CommandName;
+            _employeeSession.SetSelectedEmployee(selectedEmployeeId);
+            _employeeSession.SetCurrentAction(actionName);
+            SetUIFromEmployee();
+            UpdateEmployeeButtons();
+            LogCurrentSession();
+
+        } 
+        #endregion
+        #region PRIVATE HELPER METHODS
+        private void UpdateEmployeeButtons()
+        {
+            UpdateActionButtonText();
+            UpdateResetButtonVisibility();
+        }
+        private void ResetEmployeeSession()
+        {
+            _employeeSession.Reset();
         }
 
+
+        private Employee GetEmployeeFromUI()
+        {
+            var employee = new Employee();
+            employee.EmployeeName = txtEmployeeName.Text;
+            employee.Designation = ddlDesignation.SelectedItem.Text;
+            employee.Salary = Convert.ToDecimal(txtSalary.Text);
+            employee.Email = txtEmail.Text;
+            employee.Mobile = txtMobile.Text;
+            employee.Qualification = ddlQualification.SelectedItem.Text;
+            var managerId = 0;
+            if (Int32.TryParse(txtManager.Text, out managerId))
+            {
+                employee.Manager = managerId;
+            }
+            return employee;
+        }
+
+        private void SetUIFromEmployee()
+        {
+            if (_employeeSession.IsEmployeeSelected())
+            {
+                int selectedId = Convert.ToInt32(Session[EmployeeConstants.SELECTED_EMPLOYEE].ToString());
+                var employee = _repository.GetEmployee(selectedId);
+                txtEmployeeName.Text = employee.EmployeeName;
+                ddlDesignation.SelectedValue = employee.Designation;
+                txtSalary.Text = employee.Salary.ToString();
+                txtEmail.Text = employee.Email;
+                txtMobile.Text = employee.Mobile;
+                ddlQualification.SelectedValue = employee.Qualification;
+                txtManager.Text = employee.Manager.ToString();
+
+            }
+
+        }
+
+        private Employee UpdateEmployeeFromUI()
+        {
+            var employee = new Employee();
+            if (_employeeSession.IsEmployeeSelected())
+            {
+                employee.EmployeeId = _employeeSession.GetSelectedEmployee();
+                employee.EmployeeName = txtEmployeeName.Text;
+                employee.Designation = ddlDesignation.SelectedItem.Text;
+                employee.Salary = Convert.ToDecimal(txtSalary.Text);
+                employee.Email = txtEmail.Text;
+                employee.Mobile = txtMobile.Text;
+                employee.Qualification = ddlQualification.SelectedItem.Text;
+                var managerId = 0;
+                if (Int32.TryParse(txtManager.Text, out managerId))
+                {
+                    employee.Manager = managerId;
+                }
+
+            }
+            return employee;
+        }
         private void InsertEmployee()
         {
             _repository.Insert(GetEmployeeFromUI());
@@ -75,7 +157,11 @@ namespace RevalsysTechSystemTest
 
         private void DeleteEmployee()
         {
-            throw new NotImplementedException();
+            if (_employeeSession.IsEmployeeSelected())
+            {
+                int selectedId = _employeeSession.GetSelectedEmployee();
+                _repository.Delete(selectedId);
+            }
         }
 
         private void UpdateEmployee()
@@ -83,24 +169,11 @@ namespace RevalsysTechSystemTest
             _repository.Update(UpdateEmployeeFromUI());
         }
 
-        protected void gridViewEmployees_OnRowEditing(object sender, GridViewEditEventArgs e)
+        private void HandleException(Exception exception)
         {
-            var fetchedEmployeeId = gridViewEmployees.DataKeys[e.NewEditIndex];
-            if (fetchedEmployeeId != null)
-            {
-                Session[SELECTED_EMPLOYEE] = fetchedEmployeeId.Value;
-                Session[ACTION_NAME] = ACTION_UPDATE;
-                UpdateActionButtonText();
-                SetUIFromEmployee();
-            }
-
+            lblError.Text = exception.Message;
         }
-
-        protected void gridViewEmployees_OnRowDeleting(object sender, GridViewDeleteEventArgs e)
-        {
-
-        }
-        private void RefrashEmployeesGrid()
+        private void RefreshEmployeesGrid()
         {
             gridViewEmployees.DataSource = null;
             gridViewEmployees.DataSource = _repository.GetEmployees();
@@ -125,86 +198,58 @@ namespace RevalsysTechSystemTest
 
         private void UpdateActionButtonText()
         {
-            var actionName = GetCurrentActionName();
+            var actionName = _employeeSession.GetCurrentActionName();
             switch (actionName)
             {
-                case ACTION_UPDATE:
-                    btnSubmit.Text = "Update";
+                case EmployeeConstants.ACTION_UPDATE:
+                    btnSubmit.Text = EmployeeConstants.BUTTON_NAME_UPDATE;
                     break;
-                case ACTION_DELETE:
-                    btnSubmit.Text = "Delete";
+                case EmployeeConstants.ACTION_DELETE:
+                    btnSubmit.Text = EmployeeConstants.BUTTON_NAME_DELETE;
                     break;
-                case ACTION_INSERT:
-                    btnSubmit.Text = "Submit";
+                case EmployeeConstants.ACTION_INSERT:
+                    btnSubmit.Text = EmployeeConstants.BUTTON_NAME_SAVE;
                     break;
                 default:
-                    btnSubmit.Text = "Submit";
+                    btnSubmit.Text = EmployeeConstants.BUTTON_NAME_SAVE;
                     break;
 
             }
         }
 
-        private string GetCurrentActionName()
+
+
+
+        private void UpdateResetButtonVisibility()
         {
-            return Session[ACTION_NAME] == null ? ACTION_INSERT : Session[ACTION_NAME].ToString();
-        }
-        private Employee GetEmployeeFromUI()
-        {
-            var employee = new Employee();
-            employee.EmployeeName = txtEmployeeName.Text;
-            employee.Designation = ddlDesignation.SelectedItem.Text;
-            employee.Salary = Convert.ToDecimal(txtSalary.Text);
-            employee.Email = txtEmail.Text;
-            employee.Mobile = txtMobile.Text;
-            employee.Qualification = ddlQualification.SelectedItem.Text;
-            var managerId = 0;
-            if (Int32.TryParse(txtManager.Text, out managerId))
+            if (_employeeSession.IsDeleteAction())
             {
-                employee.Manager = managerId;
+                btnReset.Visible = false;
             }
-            return employee;
-        }
-
-        private void SetUIFromEmployee()
-        {
-            if (Session[SELECTED_EMPLOYEE] != null)
+            else
             {
-                int selectedId = Convert.ToInt32(Session[SELECTED_EMPLOYEE].ToString());
-                var employee = _repository.GetEmployee(selectedId);
-                txtEmployeeName.Text = employee.EmployeeName;
-                ddlDesignation.SelectedValue = employee.Designation;
-                txtSalary.Text = employee.Salary.ToString();
-                txtEmail.Text = employee.Email;
-                txtMobile.Text = employee.Mobile;
-                ddlQualification.SelectedValue = employee.Qualification;
-                txtManager.Text = employee.Manager.ToString();
-
+                btnReset.Visible = true;
             }
-
-        }
-
-
-        private Employee UpdateEmployeeFromUI()
+        } 
+        #endregion
+        #region LOGS
+        private void LogCurrentSession()
         {
-            var employee = new Employee();
-            if (Session[SELECTED_EMPLOYEE] != null)
-            {
-                employee.EmployeeId = Convert.ToInt32(Session[SELECTED_EMPLOYEE].ToString());
-                employee.EmployeeName = txtEmployeeName.Text;
-                employee.Designation = ddlDesignation.SelectedItem.Text;
-                employee.Salary = Convert.ToDecimal(txtSalary.Text);
-                employee.Email = txtEmail.Text;
-                employee.Mobile = txtMobile.Text;
-                employee.Qualification = ddlQualification.SelectedItem.Text;
-                var managerId = 0;
-                if (Int32.TryParse(txtManager.Text, out managerId))
-                {
-                    employee.Manager = managerId;
-                }
-
-            }
-            return employee;
+            LogInUi("currentEmployee", _employeeSession.GetSelectedEmployee().ToString());
+            LogInUi("currentAction", _employeeSession.GetCurrentActionName());
         }
 
+        private void LogInUi(string msg, string msg1)
+        {
+            lblLog.Text += msg + ": " + msg1;
+        }
+
+        private void ClearLogInUi()
+        {
+            lblLog.Text = "";
+        }
+        
+        #endregion
+        
     }
 }

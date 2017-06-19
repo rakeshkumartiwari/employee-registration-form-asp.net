@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Web.UI.WebControls;
 using BLL;
 using DAL;
@@ -27,9 +28,8 @@ namespace RevalsysTechSystemTest
                 ClearLogInUi();
                 RefreshEmployeesGrid();
                 BindDdlCountry();
-               BindDdlState();
-               BindDdlCity();
-
+                BindDdlState();
+                BindDdlCity();
                 LogCurrentSession();
             }
 
@@ -107,13 +107,17 @@ namespace RevalsysTechSystemTest
             employee.Salary = Convert.ToDecimal(txtSalary.Text);
             employee.Email = txtEmail.Text;
             employee.Mobile = txtMobile.Text;
+
             employee.Qualification = GetSelectedValue(ddlQualification);
             var managerId = 0;
+
             if (Int32.TryParse(txtManager.Text, out managerId))
             {
                 employee.Manager = managerId;
             }
-
+            employee.Country = Convert.ToInt32(ddlCountry.SelectedValue);
+            employee.State = Convert.ToInt32(ddlState.SelectedValue);
+            employee.City = Convert.ToInt32(ddlCity.SelectedValue);
             return employee;
         }
         private void SetUIFromEmployee()
@@ -129,9 +133,10 @@ namespace RevalsysTechSystemTest
                 txtMobile.Text = employee.Mobile;
                 ddlQualification.SelectedValue = employee.Qualification;
                 txtManager.Text = employee.Manager.ToString();
-
+                ddlCountry.SelectedValue = employee.Country.ToString();
+                ddlState.SelectedValue = employee.State.ToString();
+                ddlCity.SelectedValue = employee.City.ToString();
             }
-
         }
 
         private string GetSelectedValue(DropDownList ddl)
@@ -168,8 +173,8 @@ namespace RevalsysTechSystemTest
             gridViewEmployees.DataSource = null;
             gridViewEmployees.DataSource = _repository.GetEmployees();
             gridViewEmployees.DataBind();
-           
-          
+
+
         }
 
         private void ClearEmployeeDetails()
@@ -243,10 +248,11 @@ namespace RevalsysTechSystemTest
 
         public void BindDdlCountry()
         {
-            ddlCountry.DataSource = _repository.Country();
+            var ds = _repository.Country();
+            ddlCountry.DataSource = ds;
             ddlCountry.Items.Clear();
             ddlCountry.Items.Insert(0, new ListItem("--Select Country--", "0"));
-         
+
             ddlCountry.DataTextField = "CountryName";
             ddlCountry.DataValueField = "CountryId";
             ddlCountry.DataBind();
@@ -257,17 +263,17 @@ namespace RevalsysTechSystemTest
         {
             int countryId = Convert.ToInt32(ddlCountry.SelectedValue);
             var ds = _repository.State(countryId);
-          
+
             ddlState.DataSource = ds;
 
 
             ddlState.Items.Clear();
             ddlState.Items.Insert(0, new ListItem("--Select State--", "0"));
-        
+
             ddlState.DataTextField = "select";
             ddlState.DataTextField = "StateNmae";
             ddlState.DataValueField = "StateId";
-     
+
 
             ddlState.DataBind();
         }
@@ -277,22 +283,22 @@ namespace RevalsysTechSystemTest
             ddlCity.DataSource = _repository.City(stateId);
             ddlCity.Items.Clear();
             ddlCity.Items.Insert(0, new ListItem("--Select City--", "0"));
-            
+
             ddlCity.DataTextField = "CityName";
             ddlCity.DataValueField = "CityId";
             ddlCity.DataBind();
         }
-
-        protected void ddlState_SelectedIndexChanged(object sender, EventArgs e)
-        {
-           BindDdlCity();
-        }
-
-   
-
         protected void ddlCountry_SelectedIndexChanged(object sender, EventArgs e)
         {
+
             BindDdlState();
+
         }
+        protected void ddlState_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BindDdlCity();
+        }
+
+
     }
 }

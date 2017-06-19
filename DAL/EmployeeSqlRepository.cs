@@ -24,8 +24,11 @@ namespace DAL
                 objCommand.Parameters.AddWithValue("Mobile", employee.Mobile);
                 objCommand.Parameters.AddWithValue("Qualification", employee.Qualification);
                 objCommand.Parameters.AddWithValue("Manager", employee.Manager);
+                objCommand.Parameters.AddWithValue("Country", employee.Manager);
+                objCommand.Parameters.AddWithValue("State", employee.Manager);
+                objCommand.Parameters.AddWithValue("City", employee.Manager);
                 objCommand.ExecuteNonQuery();
-              //change stored proc 
+                //change stored proc 
             }
         }
 
@@ -44,7 +47,10 @@ namespace DAL
                 objCommand.Parameters.AddWithValue("Mobile", employee.Mobile);
                 objCommand.Parameters.AddWithValue("Qualification", employee.Qualification);
                 objCommand.Parameters.AddWithValue("Manager", employee.Manager);
-
+                objCommand.Parameters.AddWithValue("Country", employee.Manager);
+                objCommand.Parameters.AddWithValue("State", employee.Manager);
+                objCommand.Parameters.AddWithValue("City", employee.Manager);
+                objCommand.ExecuteNonQuery();
                 objCommand.ExecuteNonQuery();
 
             }
@@ -60,7 +66,7 @@ namespace DAL
                 objCommand.CommandType = CommandType.StoredProcedure;
                 var objAdapter = new SqlDataAdapter(objCommand);
                 objAdapter.Fill(objDataSet);
-
+                //sp update karna hoga )
                 return objDataSet;
             }
         }
@@ -86,14 +92,17 @@ namespace DAL
                 employee.Email = objDataSet.Tables[0].Rows[0]["Email"].ToString();
                 employee.Mobile = objDataSet.Tables[0].Rows[0]["Mobile"].ToString();
                 employee.Qualification = objDataSet.Tables[0].Rows[0]["Qualification"].ToString();
-
+              
                 var managerId = 0;
-                var manager = objDataSet.Tables[0].Rows[0]["Manager"].ToString();
+                var manager = objDataSet.Tables[0].Rows[0]["ManagerId"].ToString();
 
                 if (Int32.TryParse(manager, out managerId))
                 {
                     employee.Manager = managerId;
                 }
+                employee.Country = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["Country"].ToString());
+                employee.State = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["State"].ToString());
+                employee.City = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["City"].ToString());
                 return employee;
             }
         }

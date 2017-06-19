@@ -166,6 +166,9 @@
                     <asp:BoundField HeaderText="Mobile" DataField="Mobile" />
                     <asp:BoundField HeaderText="Qualification" DataField="Qualification" />
                     <asp:BoundField HeaderText="Manager" DataField="ManagerName" />
+                    <asp:BoundField HeaderText="Country" DataField="CountryName" />
+                    <asp:BoundField HeaderText="State" DataField="StateName" />
+                    <asp:BoundField HeaderText="City" DataField="CityName" />
                     <asp:TemplateField>
                         <ItemTemplate>
                                <asp:LinkButton  runat="server" CommandName="ACTION_UPDATE"

@@ -24,9 +24,9 @@ namespace DAL
                 objCommand.Parameters.AddWithValue("Mobile", employee.Mobile);
                 objCommand.Parameters.AddWithValue("Qualification", employee.Qualification);
                 objCommand.Parameters.AddWithValue("Manager", employee.Manager);
-                objCommand.Parameters.AddWithValue("Country", employee.Manager);
-                objCommand.Parameters.AddWithValue("State", employee.Manager);
-                objCommand.Parameters.AddWithValue("City", employee.Manager);
+                objCommand.Parameters.AddWithValue("Country", employee.Country);
+                objCommand.Parameters.AddWithValue("State", employee.State);
+                objCommand.Parameters.AddWithValue("City", employee.City);
                 objCommand.ExecuteNonQuery();
                 //change stored proc 
             }
@@ -47,12 +47,10 @@ namespace DAL
                 objCommand.Parameters.AddWithValue("Mobile", employee.Mobile);
                 objCommand.Parameters.AddWithValue("Qualification", employee.Qualification);
                 objCommand.Parameters.AddWithValue("Manager", employee.Manager);
-                objCommand.Parameters.AddWithValue("Country", employee.Manager);
-                objCommand.Parameters.AddWithValue("State", employee.Manager);
-                objCommand.Parameters.AddWithValue("City", employee.Manager);
+                objCommand.Parameters.AddWithValue("Country", employee.Country);
+                objCommand.Parameters.AddWithValue("State", employee.State);
+                objCommand.Parameters.AddWithValue("City", employee.City);
                 objCommand.ExecuteNonQuery();
-                objCommand.ExecuteNonQuery();
-
             }
         }
 
@@ -92,20 +90,24 @@ namespace DAL
                 employee.Email = objDataSet.Tables[0].Rows[0]["Email"].ToString();
                 employee.Mobile = objDataSet.Tables[0].Rows[0]["Mobile"].ToString();
                 employee.Qualification = objDataSet.Tables[0].Rows[0]["Qualification"].ToString();
-              
-                var managerId = 0;
+
+                var managerNull = 0;
                 var manager = objDataSet.Tables[0].Rows[0]["ManagerId"].ToString();
 
-                if (Int32.TryParse(manager, out managerId))
+                if (Int32.TryParse(manager, out managerNull))
                 {
-                    employee.Manager = managerId;
+                    employee.Manager = managerNull;
                 }
-                employee.Country = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["Country"].ToString());
-                employee.State = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["State"].ToString());
-                employee.City = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["City"].ToString());
+
+                employee.Country = objDataSet.Tables[0].Rows[0]["Country"] != System.DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["Country"].ToString()) : 0;
+                employee.State = objDataSet.Tables[0].Rows[0]["State"] != System.DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["State"].ToString()) : 0;
+                employee.City = objDataSet.Tables[0].Rows[0]["City"] != System.DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["City"].ToString()) : 0;
                 return employee;
             }
         }
+
+       
+
         public void Delete(int employeeId)
         {
             using (var objConnection = new SqlConnection(connectionString))

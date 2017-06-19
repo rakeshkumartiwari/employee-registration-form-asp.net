@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Web.UI.WebControls;
@@ -41,28 +42,7 @@ namespace RevalsysTechSystemTest
         {
             try
             {
-                var actionName = _employeeSession.GetCurrentActionName();
-                switch (actionName)
-                {
-                    case EmployeeConstants.ACTION_UPDATE:
-                        UpdateEmployee();
-                        break;
-                    case EmployeeConstants.ACTION_DELETE:
-                        DeleteEmployee();
-                        break;
-                    case EmployeeConstants.ACTION_INSERT:
-                        InsertEmployee();
-                        break;
-                    default:
-                        throw new Exception("No action define");
-
-                }
-                ClearEmployeeDetails();
-                RefreshEmployeesGrid();
-                ResetEmployeeSession();
-                UpdateEmployeeButtons();
-                LogCurrentSession();
-
+                ProcessAction();
             }
             catch (Exception ex)
             {
@@ -70,6 +50,42 @@ namespace RevalsysTechSystemTest
             }
 
         }
+
+        private void ProcessAction()
+        {
+            var actionName = _employeeSession.GetCurrentActionName();
+
+            switch (actionName)
+            {
+                case EmployeeConstants.ACTION_UPDATE:
+                    UpdateEmployee();
+                    break;
+                case EmployeeConstants.ACTION_DELETE:
+                    DeleteEmployee();
+                    break;
+                case EmployeeConstants.ACTION_INSERT:
+                    InsertEmployee();
+                    break;
+                default:
+                    throw new Exception("No action define");
+
+            }
+
+            AfterActionProcessed();
+        }
+
+        private void AfterActionProcessed()
+        {
+            ClearEmployeeDetails();
+            RefreshEmployeesGrid();
+            ResetEmployeeSession();
+            UpdateEmployeeButtons();
+            ClearDdlCity();
+            ClearDdlState();
+            //do no clear country since it is needed for add action.
+            LogCurrentSession();
+        }
+
         protected void btnReset_Click(object sender, EventArgs e)
         {
             SetUIFromEmployee();
@@ -115,9 +131,9 @@ namespace RevalsysTechSystemTest
             {
                 employee.Manager = managerId;
             }
-            employee.Country = Convert.ToInt32(ddlCountry.SelectedValue);
-            employee.State = Convert.ToInt32(ddlState.SelectedValue);
-            employee.City = Convert.ToInt32(ddlCity.SelectedValue);
+            employee.Country = ddlCountry.SelectedValue == " " ? 0 : Convert.ToInt32(ddlCountry.SelectedValue);
+            employee.State = ddlState.SelectedValue == " " ? 0 : Convert.ToInt32(ddlState.SelectedValue);
+            employee.City = ddlCity.SelectedValue == " " ? 0 : Convert.ToInt32(ddlCity.SelectedValue);
             return employee;
         }
         private void SetUIFromEmployee()
@@ -128,13 +144,27 @@ namespace RevalsysTechSystemTest
                 var employee = _repository.GetEmployee(selectedId);
                 txtEmployeeName.Text = employee.EmployeeName;
                 ddlDesignation.SelectedValue = employee.Designation;
-                txtSalary.Text = employee.Salary.ToString();
+                txtSalary.Text = employee.Salary.ToString(CultureInfo.InvariantCulture);
                 txtEmail.Text = employee.Email;
                 txtMobile.Text = employee.Mobile;
                 ddlQualification.SelectedValue = employee.Qualification;
                 txtManager.Text = employee.Manager.ToString();
+
+
+                //1- I missed populating your drop down with selected data before adding it. 
+                // therefore I did bindddl call first.
+                //2- I had wrong SP city name was not updating therefore while clicking on edit it was crashing. 
+                //3- once action processed I was not clearing ddl state and ddl city. 
+                //-----------------------------that is it.
+
+                BindDdlCountry(); //country is comding wrong from DB.
                 ddlCountry.SelectedValue = employee.Country.ToString();
+                
+                // load the drop down first before you select. Else it will throw error saying list does not has item to select.
+                BindDdlState();
                 ddlState.SelectedValue = employee.State.ToString();
+                 
+                BindDdlCity();
                 ddlCity.SelectedValue = employee.City.ToString();
             }
         }
@@ -173,8 +203,6 @@ namespace RevalsysTechSystemTest
             gridViewEmployees.DataSource = null;
             gridViewEmployees.DataSource = _repository.GetEmployees();
             gridViewEmployees.DataBind();
-
-
         }
 
         private void ClearEmployeeDetails()
@@ -186,6 +214,10 @@ namespace RevalsysTechSystemTest
             txtMobile.Text = string.Empty;
             ddlQualification.SelectedIndex = -1;
             txtManager.Text = string.Empty;
+            ddlCountry.SelectedIndex = -1;
+            ddlCity.SelectedIndex = -1;
+            ddlState.SelectedIndex = -1;
+
         }
 
         private void ClearErrorMessage()
@@ -225,6 +257,59 @@ namespace RevalsysTechSystemTest
                 btnReset.Visible = true;
             }
         }
+
+        private void BindDdlCountry()
+        {
+            var ds = _repository.Country();
+            ddlCountry.DataSource = ds;
+            ddlCountry.Items.Clear();
+            ddlCountry.Items.Insert(0, new ListItem("--Select Country--", "0"));
+
+            ddlCountry.DataTextField = "CountryName";
+            ddlCountry.DataValueField = "CountryId";
+            ddlCountry.DataBind();
+
+        }
+
+        private void ClearDdlState()
+        {
+            ddlState.Items.Clear();
+            ddlState.Items.Insert(0, new ListItem("--Select State--", "0"));
+            ddlState.DataBind();
+        }
+
+        private void BindDdlState()
+        {
+            int countryId = Convert.ToInt32(ddlCountry.SelectedValue);
+            var ds = _repository.State(countryId);
+            ddlState.DataSource = ds;
+            ddlState.Items.Clear();
+            ddlState.Items.Insert(0, new ListItem("--Select State--", "0"));
+            ddlState.DataTextField = "select";
+            ddlState.DataTextField = "StateNmae";
+            ddlState.DataValueField = "StateId";
+
+
+            ddlState.DataBind();
+        }
+        private void ClearDdlCity()
+        {
+            ddlCity.Items.Clear();
+            ddlCity.Items.Insert(0, new ListItem("--Select City--", "0"));
+            ddlCity.DataBind();
+        }
+
+        private void BindDdlCity()
+        {
+            int stateId = Convert.ToInt32(ddlState.SelectedValue);
+            ddlCity.DataSource = _repository.City(stateId);
+            ddlCity.Items.Clear();
+            ddlCity.Items.Insert(0, new ListItem("--Select City--", "0"));
+
+            ddlCity.DataTextField = "CityName";
+            ddlCity.DataValueField = "CityId";
+            ddlCity.DataBind();
+        }
         #endregion
 
         #region LOGS
@@ -246,52 +331,11 @@ namespace RevalsysTechSystemTest
 
         #endregion
 
-        public void BindDdlCountry()
-        {
-            var ds = _repository.Country();
-            ddlCountry.DataSource = ds;
-            ddlCountry.Items.Clear();
-            ddlCountry.Items.Insert(0, new ListItem("--Select Country--", "0"));
-
-            ddlCountry.DataTextField = "CountryName";
-            ddlCountry.DataValueField = "CountryId";
-            ddlCountry.DataBind();
-
-        }
-
-        public void BindDdlState()
-        {
-            int countryId = Convert.ToInt32(ddlCountry.SelectedValue);
-            var ds = _repository.State(countryId);
-
-            ddlState.DataSource = ds;
-
-
-            ddlState.Items.Clear();
-            ddlState.Items.Insert(0, new ListItem("--Select State--", "0"));
-
-            ddlState.DataTextField = "select";
-            ddlState.DataTextField = "StateNmae";
-            ddlState.DataValueField = "StateId";
-
-
-            ddlState.DataBind();
-        }
-        public void BindDdlCity()
-        {
-            int stateId = Convert.ToInt32(ddlState.SelectedValue);
-            ddlCity.DataSource = _repository.City(stateId);
-            ddlCity.Items.Clear();
-            ddlCity.Items.Insert(0, new ListItem("--Select City--", "0"));
-
-            ddlCity.DataTextField = "CityName";
-            ddlCity.DataValueField = "CityId";
-            ddlCity.DataBind();
-        }
         protected void ddlCountry_SelectedIndexChanged(object sender, EventArgs e)
         {
 
             BindDdlState();
+            ClearDdlCity();
 
         }
         protected void ddlState_SelectedIndexChanged(object sender, EventArgs e)

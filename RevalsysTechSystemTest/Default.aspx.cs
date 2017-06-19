@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Net;
 using System.Web.UI.WebControls;
 using BLL;
@@ -25,6 +26,9 @@ namespace RevalsysTechSystemTest
                 ClearErrorMessage();
                 ClearLogInUi();
                 RefreshEmployeesGrid();
+                BindDdlCountry();
+               BindDdlState();
+               BindDdlCity();
 
                 LogCurrentSession();
             }
@@ -164,6 +168,8 @@ namespace RevalsysTechSystemTest
             gridViewEmployees.DataSource = null;
             gridViewEmployees.DataSource = _repository.GetEmployees();
             gridViewEmployees.DataBind();
+           
+          
         }
 
         private void ClearEmployeeDetails()
@@ -235,5 +241,58 @@ namespace RevalsysTechSystemTest
 
         #endregion
 
+        public void BindDdlCountry()
+        {
+            ddlCountry.DataSource = _repository.Country();
+            ddlCountry.Items.Clear();
+            ddlCountry.Items.Insert(0, new ListItem("--Select Country--", "0"));
+         
+            ddlCountry.DataTextField = "CountryName";
+            ddlCountry.DataValueField = "CountryId";
+            ddlCountry.DataBind();
+
+        }
+
+        public void BindDdlState()
+        {
+            int countryId = Convert.ToInt32(ddlCountry.SelectedValue);
+            var ds = _repository.State(countryId);
+          
+            ddlState.DataSource = ds;
+
+
+            ddlState.Items.Clear();
+            ddlState.Items.Insert(0, new ListItem("--Select State--", "0"));
+        
+            ddlState.DataTextField = "select";
+            ddlState.DataTextField = "StateNmae";
+            ddlState.DataValueField = "StateId";
+     
+
+            ddlState.DataBind();
+        }
+        public void BindDdlCity()
+        {
+            int stateId = Convert.ToInt32(ddlState.SelectedValue);
+            ddlCity.DataSource = _repository.City(stateId);
+            ddlCity.Items.Clear();
+            ddlCity.Items.Insert(0, new ListItem("--Select City--", "0"));
+            
+            ddlCity.DataTextField = "CityName";
+            ddlCity.DataValueField = "CityId";
+            ddlCity.DataBind();
+        }
+
+        protected void ddlState_SelectedIndexChanged(object sender, EventArgs e)
+        {
+           BindDdlCity();
+        }
+
+   
+
+        protected void ddlCountry_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            BindDdlState();
+        }
     }
 }

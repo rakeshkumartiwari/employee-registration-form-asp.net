@@ -75,11 +75,11 @@
                     <tr>
                         <td>Mobile<asp:Label ID="Label4" runat="server" Font-Bold="True" ForeColor="Red" Text="*"></asp:Label>:</td>
                         <td>
-                            <asp:TextBox ID="txtMobile" runat="server"></asp:TextBox>
+                            <asp:TextBox ID="txtMobile" runat="server" MaxLength="10"></asp:TextBox>
                         </td>
                         <td>
                             <asp:RequiredFieldValidator ID="rfvMobile" runat="server" ControlToValidate="txtMobile" Display="Dynamic" ErrorMessage="Mobile number is required." ForeColor="Red"></asp:RequiredFieldValidator>
-                            <asp:RegularExpressionValidator ID="revMobile" runat="server" ControlToValidate="txtMobile" Display="Dynamic" ErrorMessage="Invalid mobile number." ForeColor="Red" ValidationExpression="^[0-9]{10}$"></asp:RegularExpressionValidator>
+                            <asp:RegularExpressionValidator ID="revMobile" runat="server" ControlToValidate="txtMobile" Display="Dynamic" ErrorMessage="Invalid mobile number." ForeColor="Red" ValidationExpression="^[7-9]{1}[0-9]{9}$"></asp:RegularExpressionValidator>
                         </td>
                     </tr>
                     <tr>
@@ -98,6 +98,40 @@
                         <td>Manager :</td>
                         <td colspan="2">
                             <asp:TextBox ID="txtManager" runat="server"></asp:TextBox>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                           Country : 
+                        </td>
+                        <td colspan="2">
+                            <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" AppendDataBoundItems="true" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged">
+                                
+                            </asp:DropDownList>
+                           
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                           State : 
+                        </td>
+                        <td colspan="2">
+                           <asp:DropDownList ID="ddlState" runat="server" AutoPostBack="True" AppendDataBoundItems="true" OnSelectedIndexChanged="ddlState_SelectedIndexChanged">
+                               
+                           </asp:DropDownList>
+                        </td>
+
+                    </tr>
+                    <tr>
+                        <td>
+                           City : 
+                        </td>
+                        <td colspan="2">
+                           <asp:DropDownList ID="ddlCity" runat="server" AutoPostBack="false" AppendDataBoundItems="true">
+                               
+                           </asp:DropDownList>
                         </td>
 
                     </tr>

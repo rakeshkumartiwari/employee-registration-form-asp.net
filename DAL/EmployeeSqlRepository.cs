@@ -25,7 +25,7 @@ namespace DAL
                 objCommand.Parameters.AddWithValue("Qualification", employee.Qualification);
                 objCommand.Parameters.AddWithValue("Manager", employee.Manager);
                 objCommand.ExecuteNonQuery();
-
+              //change stored proc 
             }
         }
 
@@ -106,6 +106,52 @@ namespace DAL
                 objCommand.CommandType = CommandType.StoredProcedure;
                 objCommand.Parameters.AddWithValue("EmployeeId", employeeId);
                 objCommand.ExecuteNonQuery();
+            }
+        }
+
+        public DataSet Country()
+        {
+            using (var objConnection = new SqlConnection(connectionString))
+            {
+                objConnection.Open();
+
+                var objDataSet = new DataSet();
+                var objCommand = new SqlCommand("select * from tbl_Rakesh_Country", objConnection);
+
+                var objAdapter = new SqlDataAdapter(objCommand);
+                objAdapter.Fill(objDataSet);
+                return objDataSet;
+
+            }
+        }
+        public DataSet State(int countryId)
+        {
+            using (var objConnection = new SqlConnection(connectionString))
+            {
+                objConnection.Open();
+
+                var objDataSet = new DataSet();
+                var objCommand = new SqlCommand("select * from tbl_Rakesh_State where CountryId=" + countryId + "", objConnection);
+
+                var objAdapter = new SqlDataAdapter(objCommand);
+                objAdapter.Fill(objDataSet);
+                return objDataSet;
+
+            }
+        }
+        public DataSet City(int stateId)
+        {
+            using (var objConnection = new SqlConnection(connectionString))
+            {
+                objConnection.Open();
+
+                var objDataSet = new DataSet();
+                var objCommand = new SqlCommand("select * from tbl_Rakesh_City where stateId='" + stateId + "'", objConnection);
+
+                var objAdapter = new SqlDataAdapter(objCommand);
+                objAdapter.Fill(objDataSet);
+                return objDataSet;
+
             }
         }
     }

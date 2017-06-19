@@ -10,5 +10,8 @@
        public string Mobile { get; set; }
        public string Qualification { get; set; }
        public int? Manager { get; set; }
+       public int Country { get; set; }
+       public int  State { get; set; }
+       public int City { get; set; }
     }
 }

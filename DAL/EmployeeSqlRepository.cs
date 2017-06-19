@@ -8,11 +8,12 @@ namespace DAL
 {
     public class EmployeeSqlRepository
     {
-        const string connectionString = @"Data Source=.\SqlExpress; Initial Catalog=RevalsysDb; Integrated Security=true";
+        private const string ConnectionString =
+            @"Data Source=.\SqlExpress; Initial Catalog=RevalsysDb; Integrated Security=true";
 
         public void Insert(Employee employee)
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
                 var objCommand = new SqlCommand("sp_InsertEmployee", objConnection);
@@ -34,7 +35,7 @@ namespace DAL
 
         public void Update(Employee employee)
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
                 var objCommand = new SqlCommand("sp_UpdateEmployee", objConnection);
@@ -56,7 +57,7 @@ namespace DAL
 
         public DataSet GetEmployees()
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
                 var objDataSet = new DataSet();
@@ -71,7 +72,7 @@ namespace DAL
 
         public Employee GetEmployee(int selectedId)
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
                 var objDataSet = new DataSet();
@@ -110,7 +111,7 @@ namespace DAL
 
         public void Delete(int employeeId)
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
                 var objCommand = new SqlCommand("sp_DeleteEmployee", objConnection);
@@ -122,7 +123,7 @@ namespace DAL
 
         public DataSet Country()
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
 
@@ -137,7 +138,7 @@ namespace DAL
         }
         public DataSet State(int countryId)
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
 
@@ -152,7 +153,7 @@ namespace DAL
         }
         public DataSet City(int stateId)
         {
-            using (var objConnection = new SqlConnection(connectionString))
+            using (var objConnection = new SqlConnection(ConnectionString))
             {
                 objConnection.Open();
 

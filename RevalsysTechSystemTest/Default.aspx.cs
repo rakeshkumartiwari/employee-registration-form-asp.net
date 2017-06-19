@@ -148,16 +148,9 @@ namespace RevalsysTechSystemTest
                 txtEmail.Text = employee.Email;
                 txtMobile.Text = employee.Mobile;
                 ddlQualification.SelectedValue = employee.Qualification;
-                txtManager.Text = employee.Manager.ToString();
+                txtManager.Text = employee.Manager == 0 ? string.Empty : employee.Manager.ToString();
 
-
-                //1- I missed populating your drop down with selected data before adding it. 
-                // therefore I did bindddl call first.
-                //2- I had wrong SP city name was not updating therefore while clicking on edit it was crashing. 
-                //3- once action processed I was not clearing ddl state and ddl city. 
-                //-----------------------------that is it.
-
-                BindDdlCountry(); //country is comding wrong from DB.
+                BindDdlCountry();
                 ddlCountry.SelectedValue = employee.Country.ToString();
                 
                 // load the drop down first before you select. Else it will throw error saying list does not has item to select.
@@ -263,7 +256,7 @@ namespace RevalsysTechSystemTest
             var ds = _repository.Country();
             ddlCountry.DataSource = ds;
             ddlCountry.Items.Clear();
-            ddlCountry.Items.Insert(0, new ListItem("--Select Country--", "0"));
+            ddlCountry.Items.Insert(0, new ListItem("Select Country", "0"));
 
             ddlCountry.DataTextField = "CountryName";
             ddlCountry.DataValueField = "CountryId";
@@ -274,7 +267,7 @@ namespace RevalsysTechSystemTest
         private void ClearDdlState()
         {
             ddlState.Items.Clear();
-            ddlState.Items.Insert(0, new ListItem("--Select State--", "0"));
+            ddlState.Items.Insert(0, new ListItem("Select State", "0"));
             ddlState.DataBind();
         }
 
@@ -284,7 +277,7 @@ namespace RevalsysTechSystemTest
             var ds = _repository.State(countryId);
             ddlState.DataSource = ds;
             ddlState.Items.Clear();
-            ddlState.Items.Insert(0, new ListItem("--Select State--", "0"));
+            ddlState.Items.Insert(0, new ListItem("Select State", "0"));
             ddlState.DataTextField = "select";
             ddlState.DataTextField = "StateNmae";
             ddlState.DataValueField = "StateId";
@@ -295,7 +288,7 @@ namespace RevalsysTechSystemTest
         private void ClearDdlCity()
         {
             ddlCity.Items.Clear();
-            ddlCity.Items.Insert(0, new ListItem("--Select City--", "0"));
+            ddlCity.Items.Insert(0, new ListItem("Select City", "0"));
             ddlCity.DataBind();
         }
 
@@ -304,7 +297,7 @@ namespace RevalsysTechSystemTest
             int stateId = Convert.ToInt32(ddlState.SelectedValue);
             ddlCity.DataSource = _repository.City(stateId);
             ddlCity.Items.Clear();
-            ddlCity.Items.Insert(0, new ListItem("--Select City--", "0"));
+            ddlCity.Items.Insert(0, new ListItem("Select City", "0"));
 
             ddlCity.DataTextField = "CityName";
             ddlCity.DataValueField = "CityId";

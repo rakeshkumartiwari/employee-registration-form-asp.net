@@ -1,5 +1,5 @@
 ﻿.tbl {
-    height: 250px;
+    height: 350px;
     width: 600px;
     margin: 0px auto;
     margin-top: 30px;
@@ -51,4 +51,8 @@ footer {
     overflow-y: scroll;
     overflow-x: hidden;
 }
-
+.ddl {
+    height: 26px;
+    width: 174px;
+    
+}

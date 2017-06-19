@@ -43,7 +43,7 @@
                     <tr>
                         <td>Degignation :</td>
                         <td colspan="2">
-                            <asp:DropDownList ID="ddlDesignation" runat="server">
+                            <asp:DropDownList CssClass="ddl" ID="ddlDesignation" runat="server">
                                 <asp:ListItem Selected="True" Value="-1">Designation</asp:ListItem>
                                 <asp:ListItem>CEO</asp:ListItem>
                                 <asp:ListItem>Project Manager</asp:ListItem>
@@ -85,7 +85,7 @@
                     <tr>
                         <td>Qualification :</td>
                         <td colspan="2">
-                            <asp:DropDownList ID="ddlQualification" runat="server">
+                            <asp:DropDownList CssClass="ddl" ID="ddlQualification" runat="server">
                                 <asp:ListItem Selected="True" Value="-1">Qualification</asp:ListItem>
                                 <asp:ListItem>MBA</asp:ListItem>
                                 <asp:ListItem>M.Tech</asp:ListItem>
@@ -106,7 +106,7 @@
                            Country : 
                         </td>
                         <td colspan="2">
-                            <asp:DropDownList ID="ddlCountry" runat="server" AutoPostBack="True" AppendDataBoundItems="true" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged">
+                            <asp:DropDownList CssClass="ddl" ID="ddlCountry" runat="server" AutoPostBack="True" AppendDataBoundItems="true" OnSelectedIndexChanged="ddlCountry_SelectedIndexChanged">
                                 
                             </asp:DropDownList>
                            
@@ -118,7 +118,7 @@
                            State : 
                         </td>
                         <td colspan="2">
-                           <asp:DropDownList ID="ddlState" runat="server" AutoPostBack="True" AppendDataBoundItems="true" OnSelectedIndexChanged="ddlState_SelectedIndexChanged">
+                           <asp:DropDownList CssClass="ddl" ID="ddlState" runat="server" AutoPostBack="True" AppendDataBoundItems="true" OnSelectedIndexChanged="ddlState_SelectedIndexChanged">
                                
                            </asp:DropDownList>
                         </td>
@@ -129,7 +129,7 @@
                            City : 
                         </td>
                         <td colspan="2">
-                           <asp:DropDownList ID="ddlCity" runat="server" AutoPostBack="false" AppendDataBoundItems="true">
+                           <asp:DropDownList CssClass="ddl" ID="ddlCity" runat="server" AutoPostBack="false" AppendDataBoundItems="true">
                                
                            </asp:DropDownList>
                         </td>

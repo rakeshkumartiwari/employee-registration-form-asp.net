@@ -65,7 +65,6 @@ namespace DAL
                 objCommand.CommandType = CommandType.StoredProcedure;
                 var objAdapter = new SqlDataAdapter(objCommand);
                 objAdapter.Fill(objDataSet);
-                //sp update karna hoga )
                 return objDataSet;
             }
         }
@@ -86,11 +85,11 @@ namespace DAL
 
                 employee.EmployeeId = Convert.ToInt32(objDataSet.Tables[0].Rows[0]["EmployeeId"].ToString());
                 employee.EmployeeName = objDataSet.Tables[0].Rows[0]["EmployeeName"].ToString();
-                employee.Designation = objDataSet.Tables[0].Rows[0]["Designation"].ToString();
+                employee.Designation = objDataSet.Tables[0].Rows[0]["Designation"] != DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["Designation"].ToString()) : 0; ;
                 employee.Salary = Convert.ToDecimal(objDataSet.Tables[0].Rows[0]["Salary"].ToString());
                 employee.Email = objDataSet.Tables[0].Rows[0]["Email"].ToString();
                 employee.Mobile = objDataSet.Tables[0].Rows[0]["Mobile"].ToString();
-                employee.Qualification = objDataSet.Tables[0].Rows[0]["Qualification"].ToString();
+                employee.Qualification = objDataSet.Tables[0].Rows[0]["Qualification"] != DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["Qualification"].ToString()) : 0; ;
 
                 var managerNull = 0;
                 var manager = objDataSet.Tables[0].Rows[0]["ManagerId"].ToString();
@@ -100,9 +99,9 @@ namespace DAL
                     employee.Manager = managerNull;
                 }
 
-                employee.Country = objDataSet.Tables[0].Rows[0]["Country"] != System.DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["Country"].ToString()) : 0;
-                employee.State = objDataSet.Tables[0].Rows[0]["State"] != System.DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["State"].ToString()) : 0;
-                employee.City = objDataSet.Tables[0].Rows[0]["City"] != System.DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["City"].ToString()) : 0;
+                employee.Country = objDataSet.Tables[0].Rows[0]["Country"] != DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["Country"].ToString()) : 0;
+                employee.State = objDataSet.Tables[0].Rows[0]["State"] != DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["State"].ToString()) : 0;
+                employee.City = objDataSet.Tables[0].Rows[0]["City"] != DBNull.Value ? Convert.ToInt32(objDataSet.Tables[0].Rows[0]["City"].ToString()) : 0;
                 return employee;
             }
         }
@@ -120,7 +119,36 @@ namespace DAL
                 objCommand.ExecuteNonQuery();
             }
         }
+        public DataSet Designation()
+        {
+            using (var objConnection = new SqlConnection(ConnectionString))
+            {
+                objConnection.Open();
 
+                var objDataSet = new DataSet();
+                var objCommand = new SqlCommand("select * from tbl_Rakesh_Designation", objConnection);
+
+                var objAdapter = new SqlDataAdapter(objCommand);
+                objAdapter.Fill(objDataSet);
+                return objDataSet;
+
+            }
+        }
+        public DataSet Qualification()
+        {
+            using (var objConnection = new SqlConnection(ConnectionString))
+            {
+                objConnection.Open();
+
+                var objDataSet = new DataSet();
+                var objCommand = new SqlCommand("select * from tbl_Rakesh_Qualification", objConnection);
+
+                var objAdapter = new SqlDataAdapter(objCommand);
+                objAdapter.Fill(objDataSet);
+                return objDataSet;
+
+            }
+        }
         public DataSet Country()
         {
             using (var objConnection = new SqlConnection(ConnectionString))

@@ -43,11 +43,8 @@
                     <tr>
                         <td>Degignation :</td>
                         <td colspan="2">
-                            <asp:DropDownList CssClass="ddl" ID="ddlDesignation" runat="server">
-                                <asp:ListItem Selected="True" Value="-1">Designation</asp:ListItem>
-                                <asp:ListItem>CEO</asp:ListItem>
-                                <asp:ListItem>Project Manager</asp:ListItem>
-                                <asp:ListItem>Team Leader</asp:ListItem>
+                            <asp:DropDownList CssClass="ddl" ID="ddlDesignation" runat="server" AppendDataBoundItems="True">
+                                
                             </asp:DropDownList>
                         </td>
 
@@ -85,11 +82,8 @@
                     <tr>
                         <td>Qualification :</td>
                         <td colspan="2">
-                            <asp:DropDownList CssClass="ddl" ID="ddlQualification" runat="server">
-                                <asp:ListItem Selected="True" Value="-1">Qualification</asp:ListItem>
-                                <asp:ListItem>MBA</asp:ListItem>
-                                <asp:ListItem>M.Tech</asp:ListItem>
-                                <asp:ListItem>B.Tech</asp:ListItem>
+                            <asp:DropDownList CssClass="ddl" ID="ddlQualification" runat="server" AppendDataBoundItems="True">
+                               
                             </asp:DropDownList>
                         </td>
 
@@ -160,11 +154,11 @@
                 ShowHeaderWhenEmpty="True" EmptyDataText="No records Found">
                 <Columns>
                     <asp:BoundField HeaderText="Name" DataField="EmployeeName" />
-                    <asp:BoundField HeaderText="Designation" DataField="Designation" />
+                    <asp:BoundField HeaderText="Designation" DataField="DesignationName" />
                     <asp:BoundField HeaderText="Salary" DataField="Salary" DataFormatString="{0:C}" />
                     <asp:BoundField HeaderText="Email" DataField="Email" />
                     <asp:BoundField HeaderText="Mobile" DataField="Mobile" />
-                    <asp:BoundField HeaderText="Qualification" DataField="Qualification" />
+                    <asp:BoundField HeaderText="Qualification" DataField="QualificationName" />
                     <asp:BoundField HeaderText="Manager" DataField="ManagerName" />
                     <asp:BoundField HeaderText="Country" DataField="CountryName" />
                     <asp:BoundField HeaderText="State" DataField="StateName" />

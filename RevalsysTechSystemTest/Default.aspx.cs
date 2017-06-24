@@ -28,6 +28,8 @@ namespace RevalsysTechSystemTest
                 ClearErrorMessage();
                 ClearLogInUi();
                 RefreshEmployeesGrid();
+                BindDdlDesignation();
+                BindDdlQualification();
                 BindDdlCountry();
                 BindDdlState();
                 BindDdlCity();
@@ -119,21 +121,21 @@ namespace RevalsysTechSystemTest
             var employee = new Employee();
             employee.EmployeeId = _employeeSession.GetSelectedEmployee();
             employee.EmployeeName = txtEmployeeName.Text;
-            employee.Designation = GetSelectedValue(ddlDesignation);
+            employee.Designation = ddlDesignation.SelectedValue == string.Empty ? 0 : Convert.ToInt32(ddlDesignation.SelectedValue);
             employee.Salary = Convert.ToDecimal(txtSalary.Text);
             employee.Email = txtEmail.Text;
             employee.Mobile = txtMobile.Text;
 
-            employee.Qualification = GetSelectedValue(ddlQualification);
+            employee.Qualification = ddlQualification.SelectedValue == string.Empty ? 0 : Convert.ToInt32(ddlQualification.SelectedValue);
             var managerId = 0;
 
             if (Int32.TryParse(txtManager.Text, out managerId))
             {
                 employee.Manager = managerId;
             }
-            employee.Country = ddlCountry.SelectedValue == " " ? 0 : Convert.ToInt32(ddlCountry.SelectedValue);
-            employee.State = ddlState.SelectedValue == " " ? 0 : Convert.ToInt32(ddlState.SelectedValue);
-            employee.City = ddlCity.SelectedValue == " " ? 0 : Convert.ToInt32(ddlCity.SelectedValue);
+            employee.Country = ddlCountry.SelectedValue == string.Empty ? 0 : Convert.ToInt32(ddlCountry.SelectedValue);
+            employee.State = ddlState.SelectedValue == string.Empty ? 0 : Convert.ToInt32(ddlState.SelectedValue);
+            employee.City = ddlCity.SelectedValue == string.Empty ? 0 : Convert.ToInt32(ddlCity.SelectedValue);
             return employee;
         }
         private void SetUIFromEmployee()
@@ -143,11 +145,11 @@ namespace RevalsysTechSystemTest
                 int selectedId = _employeeSession.GetSelectedEmployee();
                 var employee = _repository.GetEmployee(selectedId);
                 txtEmployeeName.Text = employee.EmployeeName;
-                ddlDesignation.SelectedValue = employee.Designation;
+                ddlDesignation.SelectedValue = employee.Designation.ToString();
                 txtSalary.Text = employee.Salary.ToString(CultureInfo.InvariantCulture);
                 txtEmail.Text = employee.Email;
                 txtMobile.Text = employee.Mobile;
-                ddlQualification.SelectedValue = employee.Qualification;
+                ddlQualification.SelectedValue = employee.Qualification.ToString();
                 txtManager.Text = employee.Manager == 0 ? string.Empty : employee.Manager.ToString();
 
                 BindDdlCountry();
@@ -207,6 +209,8 @@ namespace RevalsysTechSystemTest
             txtMobile.Text = string.Empty;
             ddlQualification.SelectedIndex = -1;
             txtManager.Text = string.Empty;
+            ddlDesignation.SelectedIndex = -1;
+            ddlQualification.SelectedIndex = -1;
             ddlCountry.SelectedIndex = -1;
             ddlCity.SelectedIndex = -1;
             ddlState.SelectedIndex = -1;
@@ -250,7 +254,28 @@ namespace RevalsysTechSystemTest
                 btnReset.Visible = true;
             }
         }
+        private void BindDdlDesignation()
+        {
+            var ds = _repository.Designation();
+            ddlDesignation.DataSource = ds;
+            ddlDesignation.Items.Clear();
+            ddlDesignation.Items.Insert(0, new ListItem("Select Designation", "0"));
+            ddlDesignation.DataTextField = "Name";
+            ddlDesignation.DataValueField = "Id";
+            ddlDesignation.DataBind();
 
+        }
+        private void BindDdlQualification()
+        {
+            var ds = _repository.Qualification();
+            ddlQualification.DataSource = ds;
+            ddlQualification.Items.Clear();
+            ddlQualification.Items.Insert(0, new ListItem("Select Qualification", "0"));
+            ddlQualification.DataTextField = "Name";
+            ddlQualification.DataValueField = "Id";
+            ddlQualification.DataBind();
+
+        }
         private void BindDdlCountry()
         {
             var ds = _repository.Country();
